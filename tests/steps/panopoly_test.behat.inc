@@ -4,13 +4,13 @@
  * Provide Behat step-definitions for generic Panopoly tests.
  *
  */
-
+require_once(dirname(__FILE__).'/../features/bootstrap/PanopolyContext.php');
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-use Behat\Behat\Context\BehatContext;
+use Drupal\DrupalDriverManager;
 use Drupal\Component\Utility\Random;
-use Behat\Behat\Event\StepEvent;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
 
-class TestSubContext extends BehatContext implements DrupalSubContextInterface {
+class TestSubContext extends RawDrupalContext implements DrupalSubContextInterface {
 
   /**
    * Holds a list of temporary users created by our steps.
@@ -22,7 +22,10 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
   /**
    * Initializes context.
    */
-  public function __construct(array $parameters = array()) {
+  private $drupal;
+
+  public function __construct(DrupalDriverManager $drupal) {
+          $this->drupal = $drupal;
   }
 
   public static function getAlias() {
@@ -31,11 +34,13 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
 
   protected $private_path_overridden = FALSE;
 
-  /**
-   * Get the session from the parent context.
-   */
-  protected function getSession() {
-    return $this->getMainContext()->getSession();
+  public function getRegion($region) {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    if (!$regionObj) {
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
+    }
+    return $regionObj;
   }
 
   /**
@@ -53,87 +58,10 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
   }
 
   /**
-   * @Then /^I should see the "([^"]*)" button$/
-   */
-  public function assertButton($label) {
-    $page = $this->getSession()->getPage();
-    $results = $page->findAll('css', "input[type=submit],input[type=button],button");
-    if (!empty($results)) {
-      foreach ($results as $result) {
-        if ($result->getTagName() == 'input' && $result->getAttribute('value') == $label) {
-          return;
-        }
-        elseif ($result->getText() == $label) {
-          return;
-        }
-      }
-    }
-    throw new \Exception(sprintf('The "%s" button was not found on the page %s', $label, $this->getSession()->getCurrentUrl()));
-  }
-
-  /**
-   * @Then /^I should see the "([^"]*)" button in the "([^"]*)" region$/
-   */
-  public function assertRegionButton($label, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
-    $results = $regionObj->findAll('css', "input[type=submit],input[type=button],button");
-    if (!empty($results)) {
-      foreach ($results as $result) {
-        if ($result->getTagName() == 'input' && $result->getAttribute('value') == $label) {
-          return;
-        }
-        elseif ($result->getText() == $label) {
-          return;
-        }
-      }
-    }
-    throw new \Exception(sprintf('The "%s" button was not found in the "%s" region on the page %s', $label, $region, $this->getSession()->getCurrentUrl()));
-  }
-
-  /**
-   * @Then /^I should see the "([^"]*)" element in the "([^"]*)" region$/
-   */
-  public function assertRegionElement($tag, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
-    $elements = $regionObj->findAll('css', $tag);
-    if (!empty($elements)) {
-      return;
-    }
-    throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
-  }
-
-  /**
-   * @Then /^I should not see the "([^"]*)" element in the "([^"]*)" region$/
-   */
-  public function assertNotRegionElement($tag, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
-    $result = $regionObj->findAll('css', $tag);
-    if (!empty($result)) {
-      throw new \Exception(sprintf('The element "%s" was found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then /^I should see "([^"]*)" in the "([^"]*)" element in the "([^"]*)" region$/
-   */
-  public function assertRegionElementText($text, $tag, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
-    $results = $regionObj->findAll('css', $tag);
-    if (!empty($results)) {
-      foreach ($results as $result) {
-        if ($result->getText() == $text) {
-          return;
-        }
-      }
-    }
-    throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-  }
-
-  /**
    * @Then /^I should see "([^"]*)" in the "([^"]*)" element with the "([^"]*)" CSS property set to "([^"]*)" in the "([^"]*)" region$/
    */
   public function assertRegionElementTextCss($text, $tag, $property, $value, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
     if (empty($elements)) {
       throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
@@ -162,7 +90,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    * @Then /^I should see "([^"]*)" in the "([^"]*)" element with the "([^"]*)" attribute set to "([^"]*)" in the "([^"]*)" region$/
    */
   public function assertRegionElementTextAttribute($text, $tag, $attribute, $value, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
     if (empty($elements)) {
       throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
@@ -194,7 +122,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    * @Then /^I should not see "([^"]*)" in the "([^"]*)" element in the "([^"]*)" region$/
    */
   public function assertNotRegionElementText($text, $tag, $region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $regionObj = $this->getRegion($region);
     $results = $regionObj->findAll('css', $tag);
     if (!empty($results)) {
       foreach ($results as $result) {
@@ -212,7 +140,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    */
   public function assertRegionMatchesText($pattern, $region)
   {
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $regionObj = $this->getRegion($region);
 
     // Find the text within the region
     $regionText = $regionObj->getText();
@@ -228,7 +156,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    */
   public function assertNotRegionMatchesText($pattern, $region)
   {
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $regionObj = $this->getRegion($region);
 
     // Find the text within the region
     $regionText = $regionObj->getText();
@@ -243,7 +171,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    * Attempts to determine if the image is broken or not.
    */
   public function assertValidImageRegion($region) {
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', 'img');
     if (empty($elements)) {
       throw new \Exception(sprintf('No image was not found in the "%s" region on the page %s', $region, $this->getSession()->getCurrentUrl()));
@@ -287,8 +215,8 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    * @Then /^I should see the image alt "(?P<alt>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
   public function assertAltRegion($alt, $region) {
-    $alt = $this->getMainContext()->fixStepArgument($alt);
-    $regionObj = $this->getMainContext()->getRegion($region);
+    $alt = $this->fixStepArgument($alt);
+    $regionObj = $this->getRegion($region);
     $element = $regionObj->find('css', 'img');
     $tmp = $element->getAttribute('alt');
     if ($alt == $tmp) {
@@ -446,8 +374,8 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
    * @Given /^I log in with the One Time Login Url$/
    */
   public function iLogInWithTheOneTimeLoginUrl() {
-    if ($this->getMainContext()->loggedIn()) {
-      $this->getMainContext()->logOut();
+    if ($this->loggedIn()) {
+      $this->logOut();
     }
 
     $random = new Random;
@@ -461,12 +389,12 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
     $user->mail = "{$user->name}@example.com";
 
     // Create a new user.
-    $this->getMainContext()->getDriver()->userCreate($user);
+    $this->getDriver()->userCreate($user);
 
     $this->users[$user->name] = $this->user = $user;
 
-    $base_url = rtrim($this->getMainContext()->locatePath('/'), '/');
-    $login_link = $this->getMainContext()->getDriver('drush')->drush('uli', array(
+    $base_url = rtrim($this->locatePath('/'), '/');
+    $login_link = $this->getDriver('drush')->drush('uli', array(
       "'$user->name'",
       '--browser=0',
       "--uri=${base_url}",
@@ -474,7 +402,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
     // Trim EOL characters. Required or else visiting the link won't work.
     $login_link = trim($login_link);
     $login_link = str_replace("/login", '', $login_link);
-    $this->getSession()->visit($this->getMainContext()->locatePath($login_link));
+    $this->getSession()->visit($this->locatePath($login_link));
     return TRUE;
   }
 
@@ -484,7 +412,7 @@ class TestSubContext extends BehatContext implements DrupalSubContextInterface {
   public function iAmViewingALandingPage() {
     $random = new Random();
     $name = $random->name(8);
-    $this->getMainContext()->createNode('panopoly_test_landing_page', $name);
+    $this->createNode('panopoly_test_landing_page', $name);
   }
 
   /**

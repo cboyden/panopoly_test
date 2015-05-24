@@ -1,13 +1,15 @@
 <?php
+use Behat\Behat\Context\Context;
+use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
+
+use Drupal\DrupalExtension\Context\RawDrupalContext;
 
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
-    Behat\Behat\Context\BehatContext,
     Behat\Behat\Event\ScenarioEvent,
     Behat\Behat\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\Component\Utility\Random;
 
 //
@@ -20,7 +22,7 @@ use Drupal\Component\Utility\Random;
 /**
  * Features context.
  */
-class PanopolyContext extends DrupalContext
+class PanopolyContext extends RawDrupalContext implements SnippetAcceptingContext
 {
 
   /**
@@ -59,49 +61,29 @@ class PanopolyContext extends DrupalContext
 //        doSomethingWith($argument);
 //    }
 //
+  protected $menu_rebuilt = FALSE;
+
+  /** 
+   * Some functions from MinkContext are needed here
+   */
 
   /**
-   * Override MinkContext::fixStepArgument().
-   *
-   * Make it possible to use [random].
-   * If you want to use the previous random value [random:1].
-   * Also, allow newlines in arguments.
+   * Include MinkContext::getRegion().
    */
-  public function fixStepArgument($argument) {
-    $argument = str_replace('\\"', '"', $argument);
-
-    $argument = str_replace('\n', "\n", $argument);
-
-    // Token replace the argument.
-    static $random = array();
-    for ($start = 0; ($start = strpos($argument, '[', $start)) !== FALSE; ) {
-      $end = strpos($argument, ']', $start);
-      if ($end === FALSE) {
-        break;
-      }
-      $random_generator = new Random;
-      $name = substr($argument, $start + 1, $end - $start - 1);
-      if ($name == 'random') {
-        $this->vars[$name] = $random_generator->name(8);
-        $random[] = $this->vars[$name];
-      }
-      // In order to test previous random values stored in the form,
-      // suppport random:n, where n is the number or random's ago
-      // to use, i.e., random:1 is the previous random value.
-      elseif (substr($name, 0, 7) == 'random:') {
-        $num = substr($name, 7);
-        if (is_numeric($num) && $num <= count($random)) {
-          $this->vars[$name] = $random[count($random) - $num];
-        }
-      }
-      if (isset($this->vars[$name])) {
-        $argument = substr_replace($argument, $this->vars[$name], $start, $end - $start + 1);
-        $start += strlen($this->vars[$name]);
-      }
-      else {
-        $start = $end + 1;
-      }
+  public function getRegion($region) {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    if (!$regionObj) {
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
     }
+    return $regionObj;
+  }
+
+  /**
+   * Include MinkContext::fixStepArgument().
+   */
+   public function fixStepArgument($argument) {
+     $argument = str_replace('\\"', '"', $argument);
     return $argument;
   }
 
@@ -118,7 +100,7 @@ class PanopolyContext extends DrupalContext
    * @todo Add before and after event dispatchers.
    * @todo Add ability to create multiple files at once using Table.
    */
-  public function createFile($filename, $public = TRUE) {
+  public function createManagedFile($filename, $public = TRUE) {
     // Get location of source file.
     if ($this->getMinkParameter('files_path')) {
       $source_path = rtrim(realpath($this->getMinkParameter('files_path'))) . DIRECTORY_SEPARATOR . $filename;

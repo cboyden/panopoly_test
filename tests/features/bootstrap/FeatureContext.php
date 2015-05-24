@@ -5,30 +5,30 @@ require_once 'PanopolyContext.php';
 /**
  * Features context.
  */
-class FeatureContext extends PanopolyContext
-{
 
+/**
+ * Define application features from the specific context.
+ */
+class FeatureContext extends PanopolyContext {
   /**
    * Initializes context.
    * Every scenario gets its own context object.
    *
-   * @param array $parameters context parameters (set them up through behat.yml)
+   * @param array $parameters
+   *   Context parameters (set them in behat.yml)
    */
-  public function __construct(array $parameters) {
+  public function __construct() {
     // Initialize your context here
-
   }
 
 //
 // Place your definition and hook methods here:
 //
-//    /**
-//     * @Given /^I have done something with "([^"]*)"$/
-//     */
-//    public function iHaveDoneSomethingWith($argument)
-//    {
-//        doSomethingWith($argument);
-//    }
+//  /**
+//   * @Given I have done something with :stuff
+//   */
+//  public function iHaveDoneSomethingWith($stuff) {
+//    doSomethingWith($stuff);
+//  }
 //
-
 }

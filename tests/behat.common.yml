@@ -1,15 +1,22 @@
 default:
-  paths:
-    features: 'features'
-  filters:
-    tags: "~@chrome"
+  suites:
+    default:
+      paths: 
+        features: 'features'
+      filters:
+        tags: "~@chrome"
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       goutte: ~
       selenium2: ~
       # base_url: http://${drupal.uri}
       files_path: ./
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       blackbox: ~
       # drush:
       #  root: ${drush.root}
@@ -57,14 +64,18 @@ default:
       # Look in the profile modules directory and pull in module subcontexts.
       subcontexts:
         paths:
-          - "../../../"
+      #    - "../../../contrib/"
+      #    - "../../../panopoly/"
+      #    - "steps/"
 
 # Setup for Google Chrome only tests.
 chrome:
-  filters:
-    tags: "@chrome"
+  suites:
+    default:
+      filters:
+        tags: "@chrome"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       selenium2:
         browser: chrome
         capabilities: {"browser": "chrome", "browserName": "chrome", "browserVersion": "ANY", "version": "ANY"}
