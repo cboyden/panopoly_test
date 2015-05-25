@@ -7,7 +7,8 @@ Feature: Live preview
   Scenario: Automatic live preview should show changes immediately
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are automatic
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add table" in the "CTools modal" region
@@ -16,38 +17,41 @@ Feature: Live preview
       And I wait for live preview to finish
     Then I should see "Widget title" in the "Live preview" region
     When I fill in "tablefield_0_cell_0_0" with "c-1-r-1"
+      And I fill in "Title" with "Widget title 1"
       And I wait for live preview to finish
     # We need to check the table header case insensitively, because it's not
     # uncommon to make table headers capitalized.
     Then I should see text matching "/c-1-r-1/i" in the "Live preview" region
     When I fill in "tablefield_0_cell_0_1" with "c-2-r-1"
+      And I fill in "Title" with "Widget title 2"
       And I wait for live preview to finish
     Then I should see text matching "/c-2-r-1/i" in the "Live preview" region
     # Test that we can make the title into a link
-    Then I should not see the link "Widget title" in the "Live preview" region
+    Then I should not see the link "Widget title 2" in the "Live preview" region
     When I check the box "Make title a link"
       And I wait for live preview to finish
       And I fill in "path" with "http://drupal.org"
       And I wait for live preview to finish
-    Then I should see the link "Widget title" in the "Live preview" region
-    When I press "Save" in the "CTools modal" region
+    Then I should see the link "Widget title 2" in the "Live preview" region
+      And I press "Save" in the "CTools modal" region
       And I press "Save"
       And I wait for the Panels IPE to deactivate
-    Then I should see "Widget title"
-      And I should see the link "Widget title"
+    Then I should see "Widget title 2"
+      And I should see the link "Widget title 2"
       And I should see "c-1-r-1"
       And I should see "c-2-r-1"
 
   @api @javascript @panopoly_magic @panopoly_widgets
   Scenario: Live preview should work with views
     Given I am logged in as a user with the "administrator" role
-      And "panopoly_test_page" nodes:
+      And "panopoly_test_page" content:
       | title       | body      | created            | status |
       | Test Page 3 | Test body | 01/01/2001 11:00am |      1 |
       | Test Page 1 | Test body | 01/02/2001 11:00am |      1 |
       | Test Page 2 | Test body | 01/03/2001 11:00am |      1 |
       And Panopoly magic live previews are automatic
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content list" in the "CTools modal" region
@@ -117,7 +121,8 @@ Feature: Live preview
   Scenario: Manual live preview should show changes when requested
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are manual
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -132,12 +137,14 @@ Feature: Live preview
   Scenario: Automatic live preview should validation errors immediately
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are automatic
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add spotlight" in the "CTools modal" region
     Then I should see "Configure new Add spotlight"
     When I fill in "Description" with "Testing description"
+      And I fill in "Title" with "Preview"
       And I wait for live preview to finish
     Then I should see "Image field is required"
 
@@ -147,7 +154,8 @@ Feature: Live preview
   Scenario: Automatic live preview should update when making changes in the WYSIWYG
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are automatic
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -182,7 +190,8 @@ Feature: Live preview
   Scenario: Page should match live preview after saving the widget but before saving the page
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are manual
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -215,7 +224,8 @@ Feature: Live preview
   Scenario: Live preview should work equally well with a reusable widget
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are manual
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -250,7 +260,8 @@ Feature: Live preview
   Scenario: Making the title a link should work for both new and existing widgets
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are manual
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -288,7 +299,8 @@ Feature: Live preview
 #  Scenario: Previewing an image widget should show a valid image
 #    Given I am logged in as a user with the "administrator" role
 #      And Panopoly magic live previews are manual
-#      And I am viewing a landing page
+#      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
 #    When I customize this page with the Panels IPE
 #      And I click "Add new pane"
 #      And I click "Add image" in the "CTools modal" region
@@ -308,7 +320,8 @@ Feature: Live preview
   Scenario: Making changes ONLY in the live preview shouldn't create new revisions
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are manual
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region

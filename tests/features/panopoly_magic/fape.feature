@@ -10,7 +10,7 @@ Feature: Edit field content in the IPE via FAPE
     When I visit "/node/add/panopoly-test-page"
       And I fill in the following:
         | Title               | Testing title |
-        | Full page override  | Body only     |
+        | Full page override  | node:panopoly_test_page:body_only     |
         | Editor              | plain_text    |
         | body[und][0][value] | Testing body  |
       And I press "edit-submit"

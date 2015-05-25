@@ -7,24 +7,21 @@
  */
 
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-use Behat\Behat\Context\BehatContext;
+use Drupal\DrupalDriverManager;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
 
-class FieldablePanelsPanesSubContext extends BehatContext implements DrupalSubContextInterface {
+class FieldablePanelsPanesSubContext extends RawDrupalContext implements DrupalSubContextInterface {
   /**
    * Initializes context.
    */
-  public function __construct(array $parameters = array()) {
+  private $drupal;
+
+  public function __construct(DrupalDriverManager $drupal) {
+          $this->drupal = $drupal;
   }
 
   public static function getAlias() {
     return 'fieldable_panels_panes';
-  }
-
-  /**
-   * Get the session from the parent context.
-   */
-  protected function getSession() {
-    return $this->getMainContext()->getSession();
   }
 
   /**
@@ -81,6 +78,6 @@ class FieldablePanelsPanesSubContext extends BehatContext implements DrupalSubCo
     $vid = $revisions[$revision_number - 1]->vid;
     $path = "admin/structure/fieldable-panels-panes/view/{$fpp->fpid}/revision/$vid";
 
-    $this->getSession()->visit($this->getMainContext()->locatePath($path));
+    $this->getSession()->visit($this->locatePath($path));
   }
 }

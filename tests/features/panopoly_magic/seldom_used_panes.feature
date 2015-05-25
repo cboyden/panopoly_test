@@ -8,7 +8,8 @@ Feature: Panopoly Magic allows the admin to toggle displaying seldom used pane s
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
       And I run drush "vset" "panopoly_magic_show_panels_styles 1"
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -31,7 +32,8 @@ Feature: Panopoly Magic allows the admin to toggle displaying seldom used pane s
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
       And I run drush "vset" "panopoly_magic_show_panels_styles 0"
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region

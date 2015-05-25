@@ -7,24 +7,21 @@
  */
 
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-use Behat\Behat\Context\BehatContext;
+use Drupal\DrupalDriverManager;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
 
-class WysiwygSubContext extends BehatContext implements DrupalSubContextInterface {
+class WysiwygSubContext extends RawDrupalContext implements DrupalSubContextInterface {
   /**
    * Initializes context.
    */
-  public function __construct(array $parameters = array()) {
+  private $drupal;
+
+  public function __construct(DrupalDriverManager $drupal) {
+          $this->drupal = $drupal;
   }
 
   public static function getAlias() {
     return 'wysiwyg';
-  }
-
-  /**
-   * Get the session from the parent context.
-   */
-  protected function getSession() {
-    return $this->getMainContext()->getSession();
   }
 
   /**

@@ -6,7 +6,8 @@ Feature: Add a file to a page
   Background:
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add file" in the "CTools modal" region

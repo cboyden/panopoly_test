@@ -4,7 +4,7 @@
  * Provide Behat step-definitions for generic Panopoly tests.
  *
  */
-require_once(dirname(__FILE__).'/../features/bootstrap/PanopolyContext.php');
+//require_once(dirname(__FILE__).'/../features/bootstrap/PanopolyContext.php');
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Drupal\DrupalDriverManager;
 use Drupal\Component\Utility\Random;
@@ -58,9 +58,9 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
   }
 
   /**
-   * @Then /^I should see "([^"]*)" in the "([^"]*)" element with the "([^"]*)" CSS property set to "([^"]*)" in the "([^"]*)" region$/
+   * @Then I( should) see :text in the :tag element in the :region( region)
    */
-  public function assertRegionElementTextCss($text, $tag, $property, $value, $region) {
+  public function assertRegionElementText($text, $tag, $region) {
     $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
     if (empty($elements)) {
@@ -76,60 +76,6 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
     }
     if (!$found) {
       throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
-
-    if (!empty($property)) {
-      $style = $element->getAttribute('style');
-      if (strpos($style, "$property: $value") === FALSE) {
-        throw new \Exception(sprintf('The "%s" property does not equal "%s" on the element "%s" in the "%s" region on the page %s', $property, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
-      }
-    }
-  }
-
-  /**
-   * @Then /^I should see "([^"]*)" in the "([^"]*)" element with the "([^"]*)" attribute set to "([^"]*)" in the "([^"]*)" region$/
-   */
-  public function assertRegionElementTextAttribute($text, $tag, $attribute, $value, $region) {
-    $regionObj = $this->getRegion($region);
-    $elements = $regionObj->findAll('css', $tag);
-    if (empty($elements)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
-
-    $found = FALSE;
-    foreach ($elements as $element) {
-      if ($element->getText() == $text) {
-        $found = TRUE;
-        break;
-      }
-    }
-    if (!$found) {
-      throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
-
-    if (!empty($attribute)) {
-      $attr = $element->getAttribute($attribute);
-      if (empty($attr)) {
-        throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
-      }
-      if (strpos($attr, "$value") === FALSE) {
-        throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
-      }
-    }
-  }
-
-  /**
-   * @Then /^I should not see "([^"]*)" in the "([^"]*)" element in the "([^"]*)" region$/
-   */
-  public function assertNotRegionElementText($text, $tag, $region) {
-    $regionObj = $this->getRegion($region);
-    $results = $regionObj->findAll('css', $tag);
-    if (!empty($results)) {
-      foreach ($results as $result) {
-        if ($result->getText() == $text) {
-          throw new \Exception(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-        }
-      }
     }
   }
 
@@ -215,7 +161,6 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
    * @Then /^I should see the image alt "(?P<alt>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
   public function assertAltRegion($alt, $region) {
-    $alt = $this->fixStepArgument($alt);
     $regionObj = $this->getRegion($region);
     $element = $regionObj->find('css', 'img');
     $tmp = $element->getAttribute('alt');
@@ -226,6 +171,24 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
       throw new \Exception(sprintf('No alt text matching "%s" in the "%s" region on the page %s', $alt, $region, $this->getSession()->getCurrentUrl()));
     }
   }
+
+  /**
+   * @BeforeScenario @javascript
+   *
+   * Set a variable so AfterStep knows this is a javascript scenario.
+   */
+  public function setJavascript() {
+    $this->javascript = true;
+  }
+
+  /**
+   * @AfterScenario @javascript
+   *
+   * Unset the variable so other scenarios don't run the javascript AfterStep.
+   */
+  public function unsetJavascript() {
+      $this->javascript = false;
+    }
 
   /**
    * @BeforeScenario @api&&@drupal_private_files
@@ -276,22 +239,17 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
   }
 
   /**
-   * @AfterStep @javascript
+   * @AfterStep
    *
    * After every step in a @javascript scenario, we want to wait for AJAX
    * loading to finish.
    */
-  public function afterStep(StepEvent $event) {
-    if ($definition = $event->getDefinition()) {
-      $type = $definition->getType();
-    }
-    // Step has not been defined yet.
-    else {
-      return;
-    }
-    $text = $event->getStep()->getText();
-    if (($type === 'When' || preg_match('/viewing|visit|reload/', $text)) && $event->getResult() === 0) {
-      $this->iWaitForAJAX();
+  public function afterStep($event) {
+    if (isset($this->javascript) && $this->javascript) {
+      $text = $event->getStep()->getText();
+      if (preg_match('/(follow|press|click|submit|viewing|visit|reload)/i', $text)) {
+        $this->iWaitForAjax();
+      }
     }
   }
 
@@ -352,13 +310,13 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
     sleep($arg1);
   }
 
-  /**
-   * @When /^(?:|I )wait for AJAX loading to finish$/
+/**
+   * Wait for AJAX to finish.
    *
-   * Wait for the jQuery AJAX loading to finish. ONLY USE FOR DEBUGGING!
+   * @Given I wait for AJAX
    */
-  public function iWaitForAJAX() {
-    $this->getSession()->wait(5000, 'typeof jQuery !== "undefined" && jQuery.active === 0');
+  public function iWaitForAjax() {
+    $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
   }
 
  /**
@@ -367,7 +325,7 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
    * Wait until the live preview to finish.
    */
   public function waitForLivePreview() {
-    $this->getSession()->wait(5000, 'typeof jQuery !== "undefined" && jQuery.active === 0 && jQuery("#panopoly-form-widget-preview").length > 0 && !jQuery("#panopoly-form-widget-preview").hasClass("panopoly-magic-loading")');
+    $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length)) && jQuery("#panopoly-form-widget-preview").length > 0 && !jQuery("#panopoly-form-widget-preview").hasClass("panopoly-magic-loading")');
   }
 
   /**

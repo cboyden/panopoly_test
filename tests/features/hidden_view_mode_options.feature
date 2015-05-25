@@ -8,7 +8,8 @@ Feature: Hidden view mode options
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
       And I run drush "vdel" "panopoly_magic_hidden_view_mode_options -y"
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "View panes" in the "CTools modal" region
@@ -31,19 +32,17 @@ Feature: Hidden view mode options
       And I run drush "vdel" "panopoly_magic_hidden_view_mode_options -y"
       And I visit "/admin/panopoly/settings/panopoly_magic"
     When I click "Show Advanced"
-      And I fill in "Hidden view mode options" with "full\nteaser\nfeatured\ndiff_standard"
+      And I fill in "Hidden view mode options" with "diff_standard"
       And I press "Save configuration"
-    Given I am viewing a landing page
+    Given I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "View panes" in the "CTools modal" region
       And I click "View: Magic View Modes: Fields" in the "CTools modal" region
     Then I should see "Configure new View: Magic View Modes: Fields"
     When I select the radio button "Content"
-    Then I should not see the radio button "Full content"
-      And I should not see the radio button "Teaser"
-      And I should not see the radio button "Featured"
-      And I should not see the radio button "Revision comparison"
+    Then I should not see the radio button "Revision comparison"
       And I should see the radio button "RSS"
       And I should see the radio button "Search index"
       And I should see the radio button "Search result"
@@ -56,7 +55,8 @@ Feature: Hidden view mode options
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are manual
       And I run drush "vdel" "panopoly_magic_hidden_view_mode_options -y"
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region
@@ -72,7 +72,8 @@ Feature: Hidden view mode options
     When I click "Show Advanced"
       And I fill in "Hidden view mode options" with "diff_standard"
       And I press "Save configuration"
-    Given I am viewing a landing page
+    Given I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add text" in the "CTools modal" region

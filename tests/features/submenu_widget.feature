@@ -31,7 +31,8 @@ Feature: Add submenu widget
  
   @api @javascript @panopoly_widgets @wip
   Scenario: Add submenu widget to page
-    Given I am viewing a landing page
+    Given I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add submenu"

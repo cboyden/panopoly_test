@@ -22,7 +22,7 @@ Feature: Search
   @api @panopoly_search
   Scenario: Performing a search with results
     Given I am on the homepage
-    And "panopoly_test_page" nodes:
+    And "panopoly_test_page" content:
       | title           | body        | created            | status |
       | fxabR86L Page 1 | Test page 1 | 01/01/2001 11:00am |      1 |
       | fxabR86L Page 2 | Test page 2 | 01/02/2001 11:00am |      1 |
@@ -39,7 +39,7 @@ Feature: Search
   Scenario: Search for content in widgets (not in the body)
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And I am viewing a "panopoly_test_page" node with the title "Abracadabra"
+      And I am viewing a "panopoly_test_page" with the title "Abracadabra"
     # Put a text widget on our test node.
     When I customize this page with the Panels IPE
       And I click "Add new pane"

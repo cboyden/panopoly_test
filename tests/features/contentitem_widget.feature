@@ -7,10 +7,11 @@ Feature: Add content item
   Scenario: Content item autocomplete should only offer nodes of the selected type
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And "panopoly_test_page" nodes:
+      And "panopoly_test_page" content:
       | title       | body      | created            | status |
       | Test Page 1 | Test body | 01/01/2001 11:00am |      1 |
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content item" in the "CTools modal" region
@@ -29,10 +30,11 @@ Feature: Add content item
   Scenario: Add content item (as "Fields")
     Given I am logged in as a user with the "administrator" role
     And Panopoly magic live previews are disabled
-    And "panopoly_test_page" nodes:
+    And "panopoly_test_page" content:
       | title       | body      | created            | status |
       | Test Page 1 | Test body | 01/01/2001 11:00am |      1 |
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content item" in the "CTools modal" region
@@ -53,10 +55,11 @@ Feature: Add content item
   Scenario: Add content item (as "Content")
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And "panopoly_test_page" nodes:
+      And "panopoly_test_page" content:
       | title       | body      | created            | status |
       | Test Page 1 | Test body | 01/01/2001 11:00am |      1 |
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content item" in the "CTools modal" region
@@ -66,6 +69,7 @@ Feature: Add content item
       | exposed[title] | Test Page 1       |
       And I select the radio button "Content"
       And I select the radio button "Teaser"
+      And I wait 5 seconds
       And I press "Save" in the "CTools modal" region
       And I press "Save"
       And I wait for the Panels IPE to deactivate
@@ -87,10 +91,11 @@ Feature: Add content item
   Scenario: Title override should work for all view modes
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And "panopoly_test_page" nodes:
+      And "panopoly_test_page" content:
       | title       | body      | created            | status |
       | Test Page 1 | Test body | 01/01/2001 11:00am |      1 |
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content item" in the "CTools modal" region
@@ -124,10 +129,11 @@ Feature: Add content item
   Scenario: Title override should work with non-Panelizer content types
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And "panopoly_test_page_simple" nodes:
+      And "panopoly_test_page_simple" content:
       | title       | body      | created            | status |
       | Test Page 1 | Test body | 01/01/2001 11:00am |      1 |
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content item" in the "CTools modal" region
@@ -161,10 +167,11 @@ Feature: Add content item
   Scenario: Content item widget continues to work after renaming content
     Given I am logged in as a user with the "administrator" role
       And Panopoly magic live previews are disabled
-      And "panopoly_test_page" nodes:
+      And "panopoly_test_page" content:
       | title       | body      | created            | status |
       | Test Page 1 | Test body | 01/01/2001 11:00am |      1 |
-      And I am viewing a landing page
+      And I am viewing a "panopoly_test_landing_page":
+      | Title     | [random]       |
     When I customize this page with the Panels IPE
       And I click "Add new pane"
       And I click "Add content item" in the "CTools modal" region
