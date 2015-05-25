@@ -11,13 +11,14 @@ use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 
 class FieldablePanelsPanesSubContext extends RawDrupalContext implements DrupalSubContextInterface {
+
+  private $drupal;
+
   /**
    * Initializes context.
    */
-  private $drupal;
-
   public function __construct(DrupalDriverManager $drupal) {
-          $this->drupal = $drupal;
+    $this->drupal = $drupal;
   }
 
   public static function getAlias() {

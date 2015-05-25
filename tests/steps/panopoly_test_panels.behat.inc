@@ -12,13 +12,14 @@ use Drupal\Component\Utility\Random;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 
 class PanelsSubContext extends RawDrupalContext implements DrupalSubContextInterface {
+
+  private $drupal;
+
   /**
    * Initializes context.
    */
-  private $drupal;
-
   public function __construct(DrupalDriverManager $drupal) {
-          $this->drupal = $drupal;
+    $this->drupal = $drupal;
   }
 
   public static function getAlias() {

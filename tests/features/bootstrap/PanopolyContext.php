@@ -104,7 +104,6 @@ class PanopolyContext extends RawDrupalContext implements SnippetAcceptingContex
     // Get location of source file.
     if ($this->getMinkParameter('files_path')) {
       $source_path = rtrim(realpath($this->getMinkParameter('files_path'))) . DIRECTORY_SEPARATOR . $filename;
-      echo $source_path;
       if (!is_file($source_path)) {
         throw new \Exception(sprintf("Cannot find the file at '%s'", $source_path));
       }

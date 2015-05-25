@@ -19,13 +19,13 @@ class TestSubContext extends RawDrupalContext implements DrupalSubContextInterfa
    */
   protected $users = array();
 
+  private $drupal;
+
   /**
    * Initializes context.
    */
-  private $drupal;
-
   public function __construct(DrupalDriverManager $drupal) {
-          $this->drupal = $drupal;
+    $this->drupal = $drupal;
   }
 
   public static function getAlias() {

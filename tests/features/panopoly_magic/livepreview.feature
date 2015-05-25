@@ -13,7 +13,8 @@ Feature: Live preview
       And I click "Add new pane"
       And I click "Add table" in the "CTools modal" region
     Then I should see "Configure new Add table"
-    When I fill in "Title" with "Widget title"
+    When I wait 2 seconds
+      And I fill in "Title" with "Widget title"
       And I wait for live preview to finish
     Then I should see "Widget title" in the "Live preview" region
     When I fill in "tablefield_0_cell_0_0" with "c-1-r-1"
@@ -33,7 +34,7 @@ Feature: Live preview
       And I fill in "path" with "http://drupal.org"
       And I wait for live preview to finish
     Then I should see the link "Widget title 2" in the "Live preview" region
-      And I press "Save" in the "CTools modal" region
+    When I press "Save" in the "CTools modal" region
       And I press "Save"
       And I wait for the Panels IPE to deactivate
     Then I should see "Widget title 2"
@@ -56,7 +57,8 @@ Feature: Live preview
       And I click "Add new pane"
       And I click "Add content list" in the "CTools modal" region
     Then I should see "Configure new Add content list"
-    When I fill in "widget_title" with "Content list widget"
+    When I wait 2 seconds
+      And I fill in "edit-widget-title" with "Content list widget"
       And I wait for live preview to finish
     Then I should see "Content list widget" in the "Live preview" region
     # @todo: we need to test switching the content type, but there's only
@@ -177,6 +179,7 @@ Feature: Live preview
     Then I should see "This is strong" in the "strong" element in the "Live preview" region
     # Try switching to plain text and make sure this doesn't break anything.
     When I select "Plain text" from "Editor"
+      And I wait 2 seconds
       And I fill in "edit-field-basic-text-text-und-0-value" with "Testing plain text"
       And I wait for live preview to finish
     Then I should see "Testing plain text" in the "Live preview" region
