@@ -13,9 +13,10 @@ Feature: Live preview
       And I click "Add new pane"
       And I click "Add table" in the "CTools modal" region
     Then I should see "Configure new Add table"
-    When I wait 10 seconds
-      And I fill in "tablefield_0_cell_0_0" with "c-1-r-1"
+    When I fill in "tablefield_0_cell_0_0" with "c-1-r-1"
+      And I wait 10 seconds
       And I fill in "Title" with "Widget title 1"
+      And I wait 10 seconds
       And I wait for live preview to finish
     # We need to check the table header case insensitively, because it's not
     # uncommon to make table headers capitalized.
@@ -55,8 +56,8 @@ Feature: Live preview
       And I click "Add new pane"
       And I click "Add content list" in the "CTools modal" region
     Then I should see "Configure new Add content list"
-    When I wait 10 seconds
-      And I fill in "edit-widget-title" with "Content list widget"
+    When I fill in "edit-widget-title" with "Content list widget"
+      And I wait 10 seconds
       And I wait for live preview to finish
     Then I should see "Content list widget" in the "Live preview" region
     # @todo: we need to test switching the content type, but there's only
@@ -177,8 +178,8 @@ Feature: Live preview
     Then I should see "This is strong" in the "strong" element in the "Live preview" region
     # Try switching to plain text and make sure this doesn't break anything.
     When I select "Plain text" from "Editor"
-      And I wait 10 seconds
       And I fill in "edit-field-basic-text-text-und-0-value" with "Testing plain text"
+      And I wait 10 seconds
       And I wait for live preview to finish
     Then I should see "Testing plain text" in the "Live preview" region
     # And verify that switching back to TinyMCE will still work.
