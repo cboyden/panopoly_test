@@ -13,16 +13,14 @@ Feature: Live preview
       And I click "Add new pane"
       And I click "Add table" in the "CTools modal" region
     Then I should see "Configure new Add table"
-    When I wait 2 seconds
-      And I fill in "Title" with "Widget title"
-      And I wait for live preview to finish
-    Then I should see "Widget title" in the "Live preview" region
-    When I fill in "tablefield_0_cell_0_0" with "c-1-r-1"
+    When I wait 10 seconds
+      And I fill in "tablefield_0_cell_0_0" with "c-1-r-1"
       And I fill in "Title" with "Widget title 1"
       And I wait for live preview to finish
     # We need to check the table header case insensitively, because it's not
     # uncommon to make table headers capitalized.
     Then I should see text matching "/c-1-r-1/i" in the "Live preview" region
+      And I should see "Widget title 1" in the "Live preview" region
     When I fill in "tablefield_0_cell_0_1" with "c-2-r-1"
       And I fill in "Title" with "Widget title 2"
       And I wait for live preview to finish
@@ -57,7 +55,7 @@ Feature: Live preview
       And I click "Add new pane"
       And I click "Add content list" in the "CTools modal" region
     Then I should see "Configure new Add content list"
-    When I wait 2 seconds
+    When I wait 10 seconds
       And I fill in "edit-widget-title" with "Content list widget"
       And I wait for live preview to finish
     Then I should see "Content list widget" in the "Live preview" region
@@ -179,7 +177,7 @@ Feature: Live preview
     Then I should see "This is strong" in the "strong" element in the "Live preview" region
     # Try switching to plain text and make sure this doesn't break anything.
     When I select "Plain text" from "Editor"
-      And I wait 2 seconds
+      And I wait 10 seconds
       And I fill in "edit-field-basic-text-text-und-0-value" with "Testing plain text"
       And I wait for live preview to finish
     Then I should see "Testing plain text" in the "Live preview" region
