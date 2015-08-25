@@ -4,8 +4,7 @@ Feature: Test keyboard accessibility
   I need to be able to check focus
 
   @api @javascript @keyboard @chrome
-  Scenario: Check focus: 
+  Scenario: Check focus:
     Given I am at "/demo"
-    When I focus on the element with the ID "edit-keys" 
+    When I focus on the element with the ID "edit-keys"
     Then the element with the ID "edit-keys" should be focused
-  

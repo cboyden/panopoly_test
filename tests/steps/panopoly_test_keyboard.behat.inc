@@ -26,25 +26,25 @@ class KeyboardSubContext extends RawDrupalContext implements DrupalSubContextInt
   }
 
   protected function getFocusedElementId() {
-    $focusedElementId = $this->getSession()->evaluateScript("return jQuery(document.activeElement).attr('id')"); 
+    $focusedElementId = $this->getSession()->evaluateScript("return jQuery(document.activeElement).attr('id')");
     return $focusedElementId;
   }
 
   /**
-   * @When I focus on the element with the ID :id 
+   * @When I focus on the element with the ID :id
    */
   public function iFocusOnTheElementWithTheId($id) {
     // Find the element by ID and focus it.
     $element = $this->getSession()->getPage()->findById($id);
     if (!$element) {
-      throw new \Exception(sprintf('The element with the ID "%s" was not found on the page %s', $id, $this->getSession()->getCurrentUrl())); 
+      throw new \Exception(sprintf('The element with the ID "%s" was not found on the page %s', $id, $this->getSession()->getCurrentUrl()));
     }
     $element->focus();
 
     // Check that the element was actually focused - some elements are not focusable.
     $focusedElement = $this->getFocusedElementId();
     if ($id != $focusedElement) {
-      throw new \Exception(sprintf('The element with the ID "%s" could not be focused', $id)); 
+      throw new \Exception(sprintf('The element with the ID "%s" could not be focused', $id));
     }
 
   }
@@ -56,12 +56,12 @@ class KeyboardSubContext extends RawDrupalContext implements DrupalSubContextInt
     // Find the element by ID.
     $element = $this->getSession()->getPage()->findById($id);
     if (!$element) {
-      throw new \Exception(sprintf('The element with the ID "%s" was not found on the page %s', $id, $this->getSession()->getCurrentUrl())); 
+      throw new \Exception(sprintf('The element with the ID "%s" was not found on the page %s', $id, $this->getSession()->getCurrentUrl()));
     }
     // Get the ID of the current active element.
     $focusedElement = $this->getFocusedElementId();
     if ($id != $focusedElement) {
-      throw new \Exception(sprintf('The element with the ID "%s" was not focused, "%s" was', $id, $focusedElementId)); 
+      throw new \Exception(sprintf('The element with the ID "%s" was not focused, "%s" was', $id, $focusedElementId));
     }
   }
 }
