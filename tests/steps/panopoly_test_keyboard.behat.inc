@@ -1,9 +1,8 @@
 <?php
 /**
  * @file
- * Provide Behat step-definitions for the Media module.
+ * Provide Behat step-definitions for keyboard focus actions.
  *
- * @todo Also, add a cleanup function to delete files uploaded.
  */
 
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
@@ -29,16 +28,6 @@ class KeyboardSubContext extends RawDrupalContext implements DrupalSubContextInt
   protected function getFocusedElementId() {
     $focusedElementId = $this->getSession()->evaluateScript("return jQuery(document.activeElement).attr('id')"); 
     return $focusedElementId;
-  }
-
-  protected function isFocusable($id) {
-    $focusable = $this->getSession()->evaluateScript("return jQuery('$id:focusable')"); 
-    echo $focusable;
-  }
-
-  protected function isTabbable($id) {
-    $tabbable = $this->getSession()->evaluateScript("return jQuery('$id:tabbable')"); 
-    echo $tabbable;
   }
 
   /**
